@@ -2,8 +2,12 @@ var mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 
 const Product = require('../models/product');
+const Seller = require('../models/seller');
+
 exports.getProducts = (req, res, next) => {
-    Product.find({}).then(function (products) {
+    console.log(req.sellerId);
+    Product.find({'sellerId': req.sellerId}).then((products) =>{
+        console.log(products);
         res.send(products);
         });
     }
@@ -31,12 +35,19 @@ exports.addProduct = (req, res, next) => {
     });
     product.save()
         .then(result => {
-            console.log(result);
+            return Seller.findById(req.sellerId);
+            }).
+            then(seller=>{
+            seller.products.push(product);
+            return seller.save();
+        })
+        .then(result=>{
             res.status(201).json({
                 message: 'Product Added Succesfully',
-                product: result
+                product: result,
             });
-        }).catch(err => {
+        })
+        .catch(err => {
             if (!err.statusCode) {
                 err.statusCode = 500;
             }

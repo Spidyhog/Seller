@@ -58,4 +58,6 @@ router.put('/product/:productId', sellerAuth, [
 
 router.delete('/product/:productId', sellerAuth, product.delProduct);
 
+router.get('/viewOrders',sellerAuth,sellersign.viewOrders);
+
 module.exports = router;

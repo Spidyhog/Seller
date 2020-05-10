@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const app = express();
 
 const sellerRoutes = require('./routes/seller');
+const userRoutes = require('./routes/user');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,6 +24,7 @@ app.use((error, req, res, next) => {
     res.status(status).json({ message: message });
 });
 app.use('/seller', sellerRoutes);
+app.use('/user', userRoutes);
 mongoose.connect(
     'mongodb+srv://admin:fbfuKOUSXQOLiIqF@cluster0-voers.gcp.mongodb.net/zhiffy?retryWrites=true&w=majority'
 )

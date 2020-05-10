@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
 const Seller = require('../models/seller');
+const Order = require('../models/order');
+const Product = require('../models/product');
 
 exports.postSignup = (req, res, next) => {
     const errors = validationResult(req);
@@ -74,4 +76,29 @@ exports.signin = (req, res, next) => {
             }
             next(err);
         })
+}
+
+exports.viewOrders= (req, res, next) => {
+    //const sellerId = req.sellerId;
+    Seller.findById(req.sellerId).then(seller=>{
+    console.log(seller.products.length);
+    for(var i=0; i<seller.products.length; i++){
+        Order.find({'products.productId':seller.products[i]}).lean()
+        .then(order =>{
+            order=JSON.stringify(order);
+            console.log(order);
+            console.log(order.products.productId);
+            const orders = order.forEach(products => {
+                return { productId: products.productId, quantity: products.quantity }
+            });
+            //console.log(orders);
+        })
+    }
+})
+.catch(err => {
+    if (!err.statusCode) {
+        err.statusCode = 500;
+    }
+    next(err);
+})
 }
